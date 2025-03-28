@@ -41,7 +41,7 @@ const Login: React.FC = () => {
     ];
 
     return (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 p-4">
+        <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
             <div className="w-full max-w-md">
                 <div className="bg-white p-8 rounded-xl shadow-lg">
                     <div className="text-center mb-6">
