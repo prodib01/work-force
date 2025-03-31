@@ -10,12 +10,13 @@ import {
     User,
     LogOut
 } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Logo from "../assets/logo.png";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate(); // Correct placement inside the component
 
     const toggleSidebar = () => {
         setIsCollapsed(!isCollapsed);
@@ -100,7 +101,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 `}>
                     {/* Logo */}
                     <div className="flex items-center justify-center w-8 h-8  rounded-full flex-shrink-0">
-                        {/* Replace this with your actual logo */}
                         <img src={Logo} alt="WorkforceIQ Logo" className="w-10 h-10 object-contain" />
                     </div>
 
@@ -110,7 +110,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     )}
                 </div>
 
-                {/* Navigation Items - Flex-grow to push user info to bottom */}
+                {/* Navigation Items */}
                 <nav className="mt-6 flex-grow overflow-y-auto">
                     <ul className="space-y-2 px-3">
                         <SidebarItem
@@ -146,7 +146,10 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                             </div>
 
                             {/* Settings */}
-                            <div className="cursor-pointer hover:bg-gray-100 p-2 rounded-full" title="Settings">
+                            <div className="cursor-pointer hover:bg-gray-100 p-2 rounded-full"
+                                 title="Settings"
+                                 onClick={() => navigate('/settings')} // Navigate to settings
+                            >
                                 <Settings className="w-5 h-5 text-gray-600 hover:text-gray-800" />
                             </div>
 
@@ -166,8 +169,16 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                             </div>
 
                             <div className="flex space-x-2 ml-auto">
-                                <Settings className="w-5 h-5 text-gray-600 cursor-pointer hover:text-gray-800" />
-                                <LogOut className="w-5 h-5 text-red-500 cursor-pointer hover:text-red-700" />
+                                <div
+                                    className="cursor-pointer hover:bg-gray-100 p-2 rounded-full"
+                                    title="Settings"
+                                    onClick={() => navigate('/settings')} // Navigate to settings
+                                >
+                                    <Settings className="w-5 h-5 text-gray-600 cursor-pointer hover:text-gray-800" />
+                                </div>
+                                <div className="cursor-pointer hover:bg-gray-100 p-2 rounded-full" title="Logout">
+                                    <LogOut className="w-5 h-5 text-red-500 cursor-pointer hover:text-red-700" />
+                                </div>
                             </div>
                         </div>
                     )}

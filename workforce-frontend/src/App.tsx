@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Login from "./pages/Login";
 import Signup from "./pages/Signup.tsx";
 import ForgotPassword from "./pages/ForgotPassword.tsx";
+import Settings from "./pages/Settings";
 
 const App: React.FC = () => {
     return (
@@ -14,6 +15,7 @@ const App: React.FC = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/settings" element={<Settings />} />
 
                 {/* Other routes within layout */}
                 <Route
