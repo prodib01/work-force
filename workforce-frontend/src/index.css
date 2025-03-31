@@ -4,15 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Reset and base styles */
-html, body, #root {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-}
-
-/* Remove default button styles */
-button {
-  @apply appearance-none;
+body {
+  font-family: 'Inter', sans-serif;
 }

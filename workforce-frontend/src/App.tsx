@@ -8,7 +8,10 @@ const App: React.FC = () => {
     return (
         <Router>
             <Routes>
+                {/* Login page without layout */}
                 <Route path="/login" element={<Login />} />
+
+                {/* Other routes within layout */}
                 <Route
                     path="/"
                     element={
@@ -17,6 +20,7 @@ const App: React.FC = () => {
                         </Layout>
                     }
                 />
+                {/* Add more routes within layout as needed */}
             </Routes>
         </Router>
     );
