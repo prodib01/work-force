@@ -131,7 +131,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                         <SidebarItem
                             icon={Building2}
                             text="Company Context"
-                            to="/settings"
+                            to="/company-context"
                         />
                     </ul>
                 </nav>

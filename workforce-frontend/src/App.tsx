@@ -7,6 +7,7 @@ import Signup from "./pages/Signup.tsx";
 import ForgotPassword from "./pages/ForgotPassword.tsx";
 import Settings from "./pages/Settings";
 import Assessments from "./pages/Assessments";
+import Context from "./pages/Context";
 
 const App: React.FC = () => {
     return (
@@ -35,6 +36,14 @@ const App: React.FC = () => {
                         </Layout>
                     }
                 />
+                <Route
+                    path="/company-context"
+                    element={
+                    <Layout>
+                        <Context />
+                    </Layout>
+                    }
+                    />
             </Routes>
         </Router>
     );
