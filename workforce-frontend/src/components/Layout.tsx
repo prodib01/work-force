@@ -126,7 +126,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                         <SidebarItem
                             icon={BookmarkCheck}
                             text="Saved Assessments"
-                            to="/analytics"
+                            to="/assessments"
                         />
                         <SidebarItem
                             icon={Building2}

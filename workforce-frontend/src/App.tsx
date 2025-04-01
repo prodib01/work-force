@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup.tsx";
 import ForgotPassword from "./pages/ForgotPassword.tsx";
 import Settings from "./pages/Settings";
+import Assessments from "./pages/Assessments";
 
 const App: React.FC = () => {
     return (
@@ -26,7 +27,14 @@ const App: React.FC = () => {
                         </Layout>
                     }
                 />
-                {/* Add more routes within layout as needed */}
+                <Route
+                    path="/assessments"
+                    element={
+                        <Layout>
+                            <Assessments />
+                        </Layout>
+                    }
+                />
             </Routes>
         </Router>
     );
