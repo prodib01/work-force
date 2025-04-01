@@ -62,4 +62,3 @@ class Company(models.Model):
         return self.company_name
 
 
-
