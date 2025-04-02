@@ -12,23 +12,8 @@ class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = CompanySerializer
 
     def perform_create(self, serializer):
-        user_id = self.request.data.get('user')  # Get the user ID from the request data
-        try:
-            user = User.objects.get(id=user_id)  # Fetch the User instance
-        except User.DoesNotExist:
-            raise ValueError("User does not exist")  # Handle the case if the user doesn't exist
-        
-        # Now save the company instance with the actual user object
+        user = self.request.user  # Automatically fetch the logged-in user
         serializer.save(user=user)
-
-
-# class CompanyViewSet(viewsets.ModelViewSet):
-#     queryset = Company.objects.all()
-#     serializer_class = CompanySerializer
-
-#     def perform_create(self, serializer):
-#         user = self.request.user  # Automatically fetch the logged-in user
-#         serializer.save(user=user)
 
 
 @csrf_exempt
@@ -113,3 +98,5 @@ def login(request):
         })
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+
