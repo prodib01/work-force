@@ -20,18 +20,36 @@ const Login: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const BASE_URL = import.meta.env.VITE_API_URL;
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async(e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError('');
 
-        // Simulate API call
-        setTimeout(() => {
-            setLoading(false);
+        try {
+            const response = await fetch(`${BASE_URL}/auth/login/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+        });
+        const data = await response.json()
+
+        if (response.ok) {
+            localStorage.setItem('token', data.token);
             navigate('/');
-        }, 1500);
+        } else {
+            setError(data.message || 'Invalid email or password');
+        }
+        } catch (error) {
+            setError('An error occurred. Please try again later.');
+        } finally {
+            setLoading(false);
+        }
     };
+
 
     const socialLogins = [
         {

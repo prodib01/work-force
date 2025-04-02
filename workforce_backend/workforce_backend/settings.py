@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
     'users',
     'assessment',
 ]
@@ -50,9 +51,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'users.middleware.JWTAuthMiddleware',
 ]
 
 ROOT_URLCONF = 'workforce_backend.urls'
+
+
 
 TEMPLATES = [
     {
@@ -71,6 +76,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'workforce_backend.wsgi.application'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 # Database
