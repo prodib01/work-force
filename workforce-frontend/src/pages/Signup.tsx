@@ -11,8 +11,9 @@ const Signup: React.FC = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const BASE_URL = import.meta.env.VITE_API_URL;
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
 
@@ -23,12 +24,31 @@ const Signup: React.FC = () => {
 
         setLoading(true);
 
-        // Simulate API call
-        setTimeout(() => {
+        try {
+            const response = await fetch(`${BASE_URL}/auth/register/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                     full_name: name, 
+                     email: email, 
+                     password: password, 
+                    }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                navigate('/login');
+            } else {
+                setError(data.detail || 'Something went wrong, please try again.');
+            }
+        } catch (err) {
+            setError('Failed to sign up. Please try again later.');
+        } finally {
             setLoading(false);
-            navigate('/');
-        }, 1500);
+        }
     };
+
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-100 flex items-center justify-center p-4">
