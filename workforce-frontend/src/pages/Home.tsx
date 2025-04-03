@@ -11,6 +11,7 @@ function AssessmentPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const BASE_URL = import.meta.env.VITE_API_URL;
+    const token = localStorage.getItem('token');
     
     // Range state values
     const [timeValue, setTimeValue] = useState(30);
@@ -23,7 +24,20 @@ function AssessmentPage() {
         const fetchCompanies = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`${BASE_URL}/auth/companies/`);
+                if (!token) {
+                    throw new Error('Authentication token not found');
+                }
+                
+                console.log('Using token:', token.substring(0, 15) + '...');
+                
+                const response = await fetch(`${BASE_URL}/auth/companies/`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+        
                 if (!response.ok) {
                     const errorText = await response.text();
                     throw new Error(`Server error: ${response.status}`);

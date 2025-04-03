@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   PlusCircle,
   Library,
@@ -16,7 +16,10 @@ import Logo from "../assets/logo.png";
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate(); // Correct placement inside the component
+  const navigate = useNavigate();
+  const BASE_URL = import.meta.env.VITE_API_URL;
+  const token = localStorage.getItem("token");
+  const [userDetails, setUserDetails] = useState(null);
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -58,6 +61,31 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     localStorage.removeItem("token");
     window.location.href = "/login";
   };
+
+  const Details = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/auth/user-details/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      console.log("User Details:", data);
+      if (response.ok) {
+        setUserDetails(data);
+      } else {
+        console.error("Error fetching user details:", data);
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+
+  useEffect(() => {
+    Details();
+  }, []);
 
   return (
     <div className="flex min-h-screen">
@@ -157,7 +185,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               {/* Avatar */}
               <div
                 className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0"
-                title="John Doe"
+                title={userDetails && userDetails.user ? userDetails.user.full_name : "Guest"}
               >
                 <User className="w-5 h-5 text-gray-600" />
               </div>
@@ -188,7 +216,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
               <div className="ml-3 flex-grow min-w-0">
                 <p className="text-sm font-semibold text-gray-800 truncate">
-                  John Doe
+                  {userDetails && userDetails.user
+                    ? userDetails.user.full_name
+                    : "Guest"}
                 </p>
               </div>
 
@@ -196,14 +226,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <div
                   className="cursor-pointer hover:bg-gray-100 p-2 rounded-full"
                   title="Settings"
-                  onClick={() => navigate("/settings")} // Navigate to settings
+                  onClick={() => navigate("/settings")}
                 >
                   <Settings className="w-5 h-5 text-gray-600 cursor-pointer hover:text-gray-800" />
                 </div>
                 <div
                   className="cursor-pointer hover:bg-gray-100 p-2 rounded-full"
                   title="Logout"
-                  onClick={handleLogout} // Add this line
+                  onClick={handleLogout}
                 >
                   <LogOut className="w-5 h-5 text-red-500 cursor-pointer hover:text-red-700" />
                 </div>
