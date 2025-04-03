@@ -6,14 +6,25 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 import json
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
+from .authentication import JWTAuthentication
+
 
 class CompanyViewSet(viewsets.ModelViewSet):
-    queryset = Company.objects.all()
     serializer_class = CompanySerializer
-
+    queryset = Company.objects.all()
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    
+    def get_queryset(self):
+        # Filter by the authenticated user
+        return Company.objects.filter(user=self.request.user)
+    
     def perform_create(self, serializer):
-        user = self.request.user  # Automatically fetch the logged-in user
-        serializer.save(user=user)
+        # Set the user automatically when creating
+        serializer.save(user=self.request.user)
+
 
 
 @csrf_exempt

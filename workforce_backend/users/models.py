@@ -13,6 +13,14 @@ class User(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
 
+    @property
+    def is_authenticated(self):
+        return True
+    
+    @property
+    def is_anonymous(self):
+        return False
+
     def set_password(self, password):
         password_bytes = password.encode('utf-8')
         salt = bcrypt.gensalt()

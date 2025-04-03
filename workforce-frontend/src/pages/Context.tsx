@@ -16,6 +16,7 @@ export default function App() {
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
     const BASE_URL = import.meta.env.VITE_API_URL
+    const token = localStorage.getItem('token')
 
     // Fetch companies when component mounts
     useEffect(() => {
@@ -23,22 +24,44 @@ export default function App() {
     }, [])
 
     const fetchCompanies = async () => {
-        setIsLoading(true)
+        setIsLoading(true);
         try {
-            const response = await fetch(`${BASE_URL}/auth/companies/`)
-            if (!response.ok) {
-                throw new Error('Failed to fetch companies')
+            // First, check if token exists
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('Authentication token not found');
             }
-            const data = await response.json()
-            setCompanies(data)
-            setError(null)
+            
+            console.log('Using token:', token.substring(0, 15) + '...');
+            
+            const response = await fetch(`${BASE_URL}/auth/companies/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+    
+            if (response.status === 401) {
+                throw new Error('Authentication failed. Please log in again.');
+            }
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => null);
+                console.error('Error response:', errorData);
+                throw new Error(`Failed to fetch companies: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            setCompanies(data);
+            setError(null);
         } catch (err) {
-            setError(err.message)
-            console.error('Error fetching companies:', err)
+            setError(err.message);
+            console.error('Error fetching companies:', err);
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
     const openModal = () => setIsModalOpen(true)
     const closeModal = () => {
@@ -57,47 +80,85 @@ export default function App() {
         setTeamStructure('')
     }
 
+    const convertCompanySize = (size) => {
+        // Map frontend options to backend options
+        const sizeMap = {
+            '1-10': '1-5', // or closest match
+            '11-50': '11-50',
+            '51-200': '51-100',
+            '201-500': '100+',
+            '500+': '100+'
+        };
+        return sizeMap[size] || '1-5'; // Default to '1-5' if no match
+    };
+
+
+    
+    const convertToSnakeCase = (str) => {
+        if (!str) return '';
+        return str.toLowerCase().replace(/\s+/g, '_');
+    };
+
+    const convertCommStyle = (style) => {
+        // Map frontend options to backend options
+        const styleMap = {
+            'Async-first': 'async_first',
+            'Real-time': 'real_time',
+            'Hybrid': 'hybrid'
+        };
+        return styleMap[style] || convertToSnakeCase(style);
+    };
+    
+    // Then use them in your saveContext function
     const saveContext = async () => {
         try {
             // Create a new company object matching API format
             const newCompany = {
                 company_name: companyName,
-                company_size: companySize,
+                company_size: convertCompanySize(companySize),
                 headquarters: headquarters,
                 year_founded: parseInt(foundedYear) || null,
-                company_structure: companyStructure.toLowerCase(),
-                work_environment: workEnv.toLowerCase(),
-                communication_style: commStyle === 'Async-first' ? 'async_first' : commStyle.toLowerCase(),
+                company_structure: convertToSnakeCase(companyStructure),
+                work_environment: convertToSnakeCase(workEnv),
+                communication_style: convertCommStyle(commStyle),
                 team_structure_overview: teamStructure,
-                user_id: 1, // Hardcoded user ID for now
             }
-
+    
+            console.log('Request URL:', `${BASE_URL}/auth/companies/`);
+            console.log('Token:', token);
+            console.log('Request body:', newCompany);
+    
             // Send POST request to API
             const response = await fetch(`${BASE_URL}/auth/companies/`, {
                 method: 'POST',
                 headers: {
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(newCompany),
-                
-            })
-            console.log(newCompany);
-
+            });
+    
+            console.log('Response status:', response.status);
+            
+            // Try to get response body even if not ok
+            const responseBody = await response.text();
+            console.log('Response body:', responseBody);
+    
             if (!response.ok) {
-                throw new Error('Failed to add company')
+                throw new Error(`Failed to add company: ${response.status} ${responseBody}`);
             }
-
+    
             // Refresh companies list
-            fetchCompanies()
+            fetchCompanies();
             
             // Reset form and close modal
-            resetForm()
-            closeModal()
+            resetForm();
+            closeModal();
         } catch (err) {
-            console.error('Error adding company:', err)
+            console.error('Error adding company:', err);
             // You could add error handling UI here
         }
-    }
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
