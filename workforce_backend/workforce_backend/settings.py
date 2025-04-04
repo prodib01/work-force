@@ -60,6 +60,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'workforce_backend.urls'
 
+ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'users.authentication.JWTAuthentication',

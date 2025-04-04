@@ -229,3 +229,25 @@ Make the question challenging but fair, relevant to the role, and designed to re
 """
         
         return prompt
+    
+    def _make_api_call(self, payload):
+        """
+        Make a direct API call with the given payload
+        
+        Args:
+            payload (dict): The full payload for the API request
+            
+        Returns:
+            dict: The API response
+        """
+        try:
+            response = requests.post(self.base_url, headers=self.headers, json=payload)
+            response.raise_for_status()  # Raise exception for HTTP errors
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            # Handle API errors gracefully
+            return {
+                "error": True,
+                "message": str(e),
+                "status_code": getattr(e.response, 'status_code', None) if hasattr(e, 'response') else None
+            }
